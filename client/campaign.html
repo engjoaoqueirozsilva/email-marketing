@@ -236,10 +236,10 @@
   <div class="logo">
     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
   </div>
-  <h1>JK Mail Sender</h1>
+  <h1>JK Mail Sender Sender</h1>
   <span class="brand-sub">— Campaigns</span>
   <div class="nav-sep"></div>
-  <a href="index.html" class="nav-link">Cadastro de Contas</a>
+  <a href="index.html" class="nav-link">Teste</a>
   <a href="campaign.html" class="nav-link active">Campanha</a>
   <div class="hdr-right">
     <div class="status-pill"><div class="dot" id="dot"></div><span id="api-lbl">verificando...</span></div>
@@ -259,7 +259,7 @@
     <div class="sec">
       <div class="sec-head"><div class="sec-lbl">Endpoint da API</div></div>
       <div class="sec-body">
-        <div class="field"><label>Base URL</label><input type="text" id="api-url" value="http://apollo.ia-outsider.com.br" spellcheck="false" /></div>
+        <div class="field"><label>Base URL</label><input type="text" id="api-url" value="http://localhost:3000" spellcheck="false" /></div>
       </div>
     </div>
 
@@ -424,8 +424,8 @@
 
   // ── App ────────────────────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
-  const BASE = () => $('api-url').value.replace(/\/+$/,'');
-  const API_KEY = 'sua_chave_aqui'; // mesma chave que API_SECRET_KEY no .env
+  const BASE = () => { const v=$('api-url').value.trim(); return (v&&!v.includes('localhost'))?v.replace(/\/+$/,''):window.location.origin; };
+  const API_KEY = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; // mesma chave que API_SECRET_KEY no .env
   const HDRS = () => { const h={'Content-Type':'application/json'}; if(API_KEY)h['x-api-key']=API_KEY; return h; };
   const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 

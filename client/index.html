@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gmail Sender — Cadastro</title>
+  <title>JK Mail Sender — Teste</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -318,7 +318,7 @@
   <div class="logo">
     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
   </div>
-  <h1>JK Mail Sender</h1>
+  <h1>Jk Mail Sender</h1>
   <span class="brand-sub">— API Client</span>
   <div class="nav-sep"></div>
   <a href="index.html" class="nav-link active">Cadastro de Contas</a>
@@ -346,7 +346,7 @@
   <div class="sec">
     <div class="sec-label">Credenciais</div>
     <div class="sec-body">
-      <div class="field"><label>Gmail do remetente <em>*</em></label><input type="email" id="cred-user" placeholder="seuemail@gmail.com" /></div>
+      <div class="field"><label>Email do remetente <em>*</em></label><input type="email" id="cred-user" placeholder="seuemail@gmail.com" /></div>
       <div class="field"><label>App Password <em>*</em></label><input type="password" id="cred-pass" placeholder="abcd efgh ijkl mnop" /></div>
       <label class="save-toggle">
         <input type="checkbox" id="save-cred" checked />
@@ -445,10 +445,10 @@
   // ── App ────────────────────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
   const history = [];
-  const BASE = () => $('api-url').value.replace('/api/v1/emails/send','').replace(/\/+$/,'');
+  const BASE = () => { const v=$('api-url').value.trim(); return (v&&!v.includes('localhost'))?v.replace('/api/v1/emails/send','').replace(/\/+$/,''):window.location.origin; };
 
   function splitEmails(v){ const p=v.split(',').map(s=>s.trim()).filter(Boolean); return p.length===1?p[0]:p; }
-  const API_KEY = 'sua_chave_aqui'; // mesma chave que API_SECRET_KEY no .env
+  const API_KEY = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; // mesma chave que API_SECRET_KEY no .env
   function buildHeaders(){ const h={'Content-Type':'application/json'}; if(API_KEY)h['x-api-key']=API_KEY; return h; }
 
   function hlJson(json){
