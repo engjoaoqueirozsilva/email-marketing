@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: jk mail Sender API
+  description: |
+    API REST para envio de e-mails HTML via Gmail usando **Nodemailer** e **App Password** do Google.
+
+    ### Como obter uma App Password
+    1. Acesse [myaccount.google.com](https://myaccount.google.com)
+    2. Segurança → **Verificação em duas etapas** (ative se necessário)
+    3. Segurança → **Senhas de app**
+    4. Selecione "Outro (nome personalizado)" → `jk mail Sender API` → Gerar
+    5. Use a senha de 16 caracteres no campo `appPassword`
+
+    > ⚠️ As credenciais são utilizadas **apenas durante a requisição** e nunca armazenadas.
+  version: 1.0.0
+  contact:
+    name: Jk Sender API
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Desenvolvimento local
+
+tags:
+  - name: Emails
+    description: Envio de e-mails via Gmail
+  - name: Health
+    description: Status da aplicação
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      description: Verifica se a API está no ar.
+      responses:
+        '200':
+          description: API operacional
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/v1/emails/send:
+    post:
+      tags: [Emails]
+      summary: Enviar e-mail HTML via Gmail
+      description: |
+        Envia um e-mail HTML usando as credenciais Gmail fornecidas na requisição.
+        Suporta múltiplos destinatários, CC, BCC e Reply-To.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmailRequest'
+            examples:
+              basico:
+                summary: Envio básico
+                value:
+                  credentials:
+                    user: seuemail@gmail.com
+                    appPassword: abcd efgh ijkl mnop
+                  to: destinatario@example.com
+                  subject: Olá do JK Sender API
+                  html: <h1>Olá!</h1><p>Este é um e-mail de teste.</p>
+              multiplosDestinatarios:
+                summary: Múltiplos destinatários com CC e BCC
+                value:
+                  credentials:
+                    user: seuemail@gmail.com
+                    appPassword: abcd efgh ijkl mnop
+                  to:
+                    - pessoa1@example.com
+                    - pessoa2@example.com
+                  cc: gestor@example.com
+                  bcc: auditoria@example.com
+                  replyTo: suporte@example.com
+                  subject: Comunicado importante
+                  html: <h2>Comunicado</h2><p>Texto do comunicado aqui.</p>
+      responses:
+        '200':
+          description: E-mail enviado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendEmailResponse'
+        '401':
+          description: Credenciais Gmail inválidas ou App Password incorreta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: Credenciais inválidas ou App Password incorreta.
+        '403':
+          description: API Key inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Dados de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              example:
+                success: false
+                message: Erro de validação nos dados enviados.
+                errors:
+                  - '"credentials.user" deve ser um e-mail válido'
+                  - '"subject" é obrigatório'
+        '429':
+          description: Rate limit atingido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: Falha ao comunicar com o servidor SMTP do Gmail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Obrigatório apenas se `API_SECRET_KEY` estiver configurada no `.env`.
+
+  schemas:
+    Credentials:
+      type: object
+      required: [user, appPassword]
+      properties:
+        user:
+          type: string
+          format: email
+          example: seuemail@gmail.com
+          description: Endereço Gmail do remetente
+        appPassword:
+          type: string
+          minLength: 8
+          example: abcd efgh ijkl mnop
+          description: App Password gerada no Google Account (16 caracteres)
+
+    SendEmailRequest:
+      type: object
+      required: [credentials, to, subject, html]
+      properties:
+        credentials:
+          $ref: '#/components/schemas/Credentials'
+        to:
+          oneOf:
+            - type: string
+              format: email
+            - type: array
+              items:
+                type: string
+                format: email
+              minItems: 1
+              maxItems: 50
+          example: destinatario@example.com
+          description: Destinatário ou lista de destinatários (máx. 50)
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Assunto do e-mail
+        html:
+          type: string
+          minLength: 1
+          example: <h1>Olá!</h1><p>Corpo do e-mail em HTML.</p>
+          description: Corpo do e-mail em formato HTML
+        cc:
+          oneOf:
+            - type: string
+              format: email
+            - type: array
+              items:
+                type: string
+                format: email
+              maxItems: 20
+          description: Com cópia (máx. 20)
+        bcc:
+          oneOf:
+            - type: string
+              format: email
+            - type: array
+              items:
+                type: string
+                format: email
+              maxItems: 20
+          description: Com cópia oculta (máx. 20)
+        replyTo:
+          type: string
+          format: email
+          description: E-mail para respostas
+
+    SendEmailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: E-mail enviado com sucesso.
+        data:
+          type: object
+          properties:
+            messageId:
+              type: string
+              example: <abc123@smtp.gmail.com>
+            accepted:
+              type: array
+              items:
+                type: string
+              example: [destinatario@example.com]
+            rejected:
+              type: array
+              items:
+                type: string
+              example: []
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time

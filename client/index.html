@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gmail Sender — Cadastro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Tema Claro ───────────────────────────────────────── */
+    :root,
+    [data-theme="light"] {
+      --page:        #F7F6F2;
+      --surface:     #FFFFFF;
+      --surface2:    #F0EFE9;
+      --border:      #E2E0D8;
+      --border2:     #CBC9BF;
+      --accent:      #1A56DB;
+      --accent-h:    #1447B8;
+      --accent-bg:   #EEF3FD;
+      --success:     #0F7B3E;
+      --success-bg:  #E8F5EE;
+      --error:       #C0392B;
+      --error-bg:    #FDECEA;
+      --warn:        #92580A;
+      --warn-bg:     #FEF5E7;
+      --text:        #1A1916;
+      --text-2:      #5A5852;
+      --text-3:      #9A9890;
+      --code-bg:     #FAFAF8;
+      --shadow:      rgba(0,0,0,.06);
+      --shadow-md:   rgba(0,0,0,.1);
+      --toggle-icon: "🌙";
+      /* JSON syntax — claro */
+      --jk: #1A56DB;
+      --js: #0F7B3E;
+      --jn: #92580A;
+      --jb: #C0392B;
+    }
+
+    /* ── Tema Escuro ──────────────────────────────────────── */
+    [data-theme="dark"] {
+      --page:        #0F1117;
+      --surface:     #181C27;
+      --surface2:    #1E2333;
+      --border:      #2A2F3F;
+      --border2:     #353C50;
+      --accent:      #4F7EFF;
+      --accent-h:    #6B93FF;
+      --accent-bg:   rgba(79,126,255,.12);
+      --success:     #22C55E;
+      --success-bg:  rgba(34,197,94,.1);
+      --error:       #EF4444;
+      --error-bg:    rgba(239,68,68,.1);
+      --warn:        #F59E0B;
+      --warn-bg:     rgba(245,158,11,.1);
+      --text:        #E8EAF0;
+      --text-2:      #9298B0;
+      --text-3:      #5A6078;
+      --code-bg:     #0A0D14;
+      --shadow:      rgba(0,0,0,.3);
+      --shadow-md:   rgba(0,0,0,.5);
+      --toggle-icon: "☀️";
+      /* JSON syntax — escuro */
+      --jk: #79B8FF;
+      --js: #9ECB8A;
+      --jn: #F8B96E;
+      --jb: #F97583;
+    }
+
+    /* ── Transição suave entre temas ──────────────────────── */
+    html {
+      background: var(--page);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      transition: background .25s, color .25s;
+    }
+    *, *::before, *::after { transition: background-color .2s, border-color .2s, color .2s, box-shadow .2s; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    body { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; }
+
+    /* ── Header ──────────────────────────────────────────── */
+    header {
+      grid-column: 1/-1;
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 28px; height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px var(--shadow);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      width: 28px; height: 28px;
+      background: var(--accent); border-radius: 7px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: 0 1px 6px rgba(79,126,255,.4);
+    }
+    .logo svg { width: 15px; height: 15px; fill: #fff; }
+    header h1 { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.2px; }
+    .brand-sub { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text-3); }
+    .nav-sep { width: 1px; height: 18px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
+    .nav-link {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text-2);
+      text-decoration: none; padding: 4px 10px; border-radius: 6px;
+    }
+    .nav-link:hover { color: var(--accent); background: var(--accent-bg); }
+    .nav-link.active { color: var(--accent); background: var(--accent-bg); font-weight: 500; }
+    .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    .status-pill {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2);
+      padding: 3px 10px; border: 1px solid var(--border); border-radius: 20px;
+      background: var(--surface2);
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); }
+    .dot.ok  { background: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,.2); }
+    .dot.err { background: var(--error); }
+
+    /* ── Theme toggle button ──────────────────────────────── */
+    .btn-theme {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; padding: 0; flex-shrink: 0;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    .btn-theme:hover { background: var(--accent-bg); border-color: var(--accent); }
+    .btn-theme .icon-sun,
+    .btn-theme .icon-moon { line-height: 1; }
+
+    [data-theme="light"] .icon-moon { display: block; }
+    [data-theme="light"] .icon-sun  { display: none; }
+    [data-theme="dark"]  .icon-sun  { display: block; }
+    [data-theme="dark"]  .icon-moon { display: none; }
+
+    /* ── Panels ──────────────────────────────────────────── */
+    .panel { padding: 24px 26px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--page); }
+    .panel:last-child { border-right: none; }
+    .panel-title {
+      font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .panel-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Sections ────────────────────────────────────────── */
+    .sec {
+      margin-bottom: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px var(--shadow);
+      overflow: hidden;
+    }
+    .sec-label {
+      font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: .8px;
+      padding: 9px 14px; border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .sec-body { padding: 14px; }
+
+    /* ── Fields ──────────────────────────────────────────── */
+    .field { margin-bottom: 10px; }
+    .field:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 11px; font-weight: 500; color: var(--text-2); margin-bottom: 4px; }
+    label em { color: var(--error); font-style: normal; }
+
+    input, textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 7px 11px;
+      outline: none;
+      resize: vertical;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    textarea.html-editor { height: 140px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── Config bar ──────────────────────────────────────── */
+    .config-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; padding: 9px 12px;
+      background: var(--accent-bg);
+      border: 1px solid rgba(79,126,255,.25);
+      border-radius: 8px;
+    }
+    .config-bar label { margin: 0; font-size: 11px; font-weight: 600; color: var(--accent); white-space: nowrap; font-family: 'JetBrains Mono', monospace; }
+    .config-bar input {
+      flex: 1; background: transparent; border: none;
+      border-bottom: 1px solid rgba(79,126,255,.3); border-radius: 0;
+      padding: 2px 0; color: var(--accent); box-shadow: none !important;
+    }
+
+    /* ── Save toggle ─────────────────────────────────────── */
+    .save-toggle {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid rgba(34,197,94,.3);
+      border-radius: 6px; background: var(--success-bg);
+      margin-top: 10px; cursor: pointer;
+    }
+    [data-theme="dark"] .save-toggle { border-color: rgba(34,197,94,.2); }
+    .save-toggle input[type=checkbox] { width: 14px; height: 14px; accent-color: var(--success); cursor: pointer; flex-shrink: 0; }
+    .save-toggle span { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--success); font-weight: 500; }
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    button { cursor: pointer; border: none; border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; }
+    button:active { transform: scale(.98); }
+    .btn-primary { background: var(--accent); color: #fff; flex: 1; box-shadow: 0 1px 4px rgba(79,126,255,.35); }
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border2); color: var(--text-2); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+    .btn-row { display: flex; gap: 8px; margin-top: 6px; }
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 5px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Response ────────────────────────────────────────── */
+    .response-area { height: 100%; display: flex; flex-direction: column; gap: 12px; }
+    .response-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 20px; border: 1px solid transparent; font-weight: 500; }
+    .badge.success { background: var(--success-bg); border-color: rgba(34,197,94,.3);  color: var(--success); }
+    .badge.error   { background: var(--error-bg);   border-color: rgba(192,57,43,.25); color: var(--error); }
+    .badge.warn    { background: var(--warn-bg);     border-color: rgba(146,88,10,.2);  color: var(--warn); }
+    .badge.neutral { background: var(--surface2);    border-color: var(--border);       color: var(--text-2); }
+    .badge.saved   { background: var(--success-bg);  border-color: rgba(34,197,94,.3);  color: var(--success); }
+    [data-theme="dark"] .badge.error   { border-color: rgba(239,68,68,.3); }
+    [data-theme="dark"] .badge.warn    { border-color: rgba(245,158,11,.3); }
+
+    .code-block {
+      flex: 1; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.75;
+      overflow: auto; white-space: pre-wrap; word-break: break-all;
+      color: var(--text-3); min-height: 180px;
+    }
+    .code-block.populated { color: var(--text); }
+    .json-key  { color: var(--jk); }
+    .json-str  { color: var(--js); }
+    .json-num  { color: var(--jn); }
+    .json-bool { color: var(--jb); }
+    .json-null { color: var(--text-3); }
+
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; color: var(--text-3); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .empty-state svg { opacity: .2; }
+
+    /* ── Tabs ────────────────────────────────────────────── */
+    .tabs { display: flex; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .tab {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text-2);
+      padding: 6px 14px; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      background: none; border-radius: 0; border-top: none; border-left: none; border-right: none;
+    }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+    .tab:hover:not(.active) { color: var(--text); }
+    .tab-content { display: none; }
+    .tab-content.active { display: flex; flex-direction: column; flex: 1; }
+    iframe#preview { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 8px; min-height: 240px; }
+
+    /* ── History ─────────────────────────────────────────── */
+    .history-list { display: flex; flex-direction: column; gap: 5px; }
+    .history-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 7px;
+      cursor: pointer; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      background: var(--surface);
+    }
+    .history-item:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+    .hi-status { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .hi-info { flex: 1; overflow: hidden; }
+    .hi-to { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+    .hi-time { font-size: 10px; color: var(--text-3); }
+
+    /* ── Cred DB list ────────────────────────────────────── */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+    .cred-db-list { display: flex; flex-direction: column; gap: 5px; }
+    .cred-db-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border: 1px solid var(--border); border-radius: 7px;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace; background: var(--surface);
+      animation: fadeIn .2s ease;
+    }
+    .cdb-email { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+    .cdb-badge { font-size: 9px; padding: 2px 7px; border-radius: 20px; background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,.3); flex-shrink: 0; font-weight: 600; }
+    .cdb-stats { font-size: 10px; color: var(--text-3); flex-shrink: 0; }
+    .cdb-remove { padding: 2px 8px !important; font-size: 10px; background: transparent; border: 1px solid rgba(192,57,43,.35) !important; color: var(--error); border-radius: 5px; flex-shrink: 0; }
+    .cdb-remove:hover { background: var(--error-bg) !important; }
+
+    .sec-ctrl { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .sec-ctrl-title { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+    .lnk-btn { background: none; border: none; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+
+    @media(max-width:720px) { body { grid-template-columns: 1fr; } .panel { border-right: none; border-bottom: 1px solid var(--border); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+  </div>
+  <h1>JK Mail Sender</h1>
+  <span class="brand-sub">— API Client</span>
+  <div class="nav-sep"></div>
+  <a href="index.html" class="nav-link active">Cadastro de Contas</a>
+  <a href="campaign.html" class="nav-link">Campanha</a>
+  <div class="hdr-right">
+    <div class="status-pill">
+      <div class="dot" id="api-dot"></div>
+      <span id="api-status">verificando...</span>
+    </div>
+    <button class="btn-theme" id="btn-theme" title="Alternar tema">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+  </div>
+</header>
+
+<div class="panel">
+  <div class="panel-title">requisição</div>
+
+  <div class="config-bar">
+    <label>POST</label>
+    <input type="text" id="api-url" value="http://localhost:3000/api/v1/emails/send" spellcheck="false" />
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Credenciais</div>
+    <div class="sec-body">
+      <div class="field"><label>Gmail do remetente <em>*</em></label><input type="email" id="cred-user" placeholder="seuemail@gmail.com" /></div>
+      <div class="field"><label>App Password <em>*</em></label><input type="password" id="cred-pass" placeholder="abcd efgh ijkl mnop" /></div>
+      <label class="save-toggle">
+        <input type="checkbox" id="save-cred" checked />
+        <span>Salvar credencial no MongoDB após envio bem-sucedido</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Destinatários</div>
+    <div class="sec-body">
+      <div class="field"><label>Para <em>*</em></label><input type="text" id="to" placeholder="destinatario@example.com" /></div>
+      <div class="row2">
+        <div class="field"><label>CC</label><input type="text" id="cc" placeholder="copia@example.com" /></div>
+        <div class="field"><label>BCC</label><input type="text" id="bcc" placeholder="oculto@example.com" /></div>
+      </div>
+      <div class="field"><label>Reply-To</label><input type="email" id="reply-to" /></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Mensagem</div>
+    <div class="sec-body">
+      <div class="field"><label>Nome exibido</label><input type="text" id="from-name" placeholder="Ex: Equipe de Marketing" /></div>
+      <div class="field"><label>Assunto <em>*</em></label><input type="text" id="subject" /></div>
+      <div class="field"><label>HTML <em>*</em></label><textarea class="html-editor" id="html-body" placeholder="<h1>Olá!</h1>"></textarea></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-primary" id="btn-send">Enviar e-mail</button>
+    <button class="btn-secondary" id="btn-clear">Limpar</button>
+  </div>
+
+  <div style="margin-top:22px">
+    <div class="sec-ctrl">
+      <span class="sec-ctrl-title">Credenciais salvas no MongoDB</span>
+      <button onclick="loadDbCredentials()" class="lnk-btn">↻ atualizar</button>
+    </div>
+    <div class="cred-db-list" id="cred-db-list">
+      <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3)">Carregando...</span>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">resposta</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="response">Resposta</button>
+    <button class="tab" data-tab="preview">Preview HTML</button>
+    <button class="tab" data-tab="history">Histórico</button>
+  </div>
+
+  <div class="tab-content active response-area" id="tab-response">
+    <div class="response-meta" id="response-meta"></div>
+    <div class="code-block" id="response-body">
+      <div class="empty-state">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+        <span>Nenhuma resposta ainda</span>
+        <span style="color:var(--text-3)">preencha o formulário e envie</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content response-area" id="tab-preview">
+    <iframe id="preview" sandbox="allow-same-origin" title="Preview"></iframe>
+  </div>
+
+  <div class="tab-content response-area" id="tab-history">
+    <div class="history-list" id="history-list">
+      <div class="empty-state" style="height:180px"><span>Nenhuma requisição enviada</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Theme toggle ─────────────────────────────────────────────────────────
+  (function() {
+    const saved = localStorage.getItem('gs_theme')
+      || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = saved;
+  })();
+
+  document.getElementById('btn-theme').addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('gs_theme', next);
+  });
+
+  // ── Guarda de sessão ──────────────────────────────────────────────────────
+  if (sessionStorage.getItem('gs_session') !== 'ok') { window.location.replace('login.html'); }
+
+  // ── App ────────────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const history = [];
+  const BASE = () => $('api-url').value.replace('/api/v1/emails/send','').replace(/\/+$/,'');
+
+  function splitEmails(v){ const p=v.split(',').map(s=>s.trim()).filter(Boolean); return p.length===1?p[0]:p; }
+  const API_KEY = 'sua_chave_aqui'; // mesma chave que API_SECRET_KEY no .env
+  function buildHeaders(){ const h={'Content-Type':'application/json'}; if(API_KEY)h['x-api-key']=API_KEY; return h; }
+
+  function hlJson(json){
+    return json
+      .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g,m=>/:$/.test(m)?`<span class="json-key">${m}</span>`:`<span class="json-str">${m}</span>`)
+      .replace(/\b(-?\d+\.?\d*)\b/g,'<span class="json-num">$1</span>')
+      .replace(/\b(true|false)\b/g,'<span class="json-bool">$1</span>')
+      .replace(/\bnull\b/g,'<span class="json-null">null</span>');
+  }
+
+  function timeSince(ms){ const s=Math.floor((Date.now()-ms)/1000); if(s<60)return s+'s atrás'; if(s<3600)return Math.floor(s/60)+'m atrás'; return Math.floor(s/3600)+'h atrás'; }
+
+  async function checkHealth(){
+    try{
+      const r=await fetch(BASE()+'/health',{signal:AbortSignal.timeout(3000)});
+      $('api-dot').className='dot '+(r.ok?'ok':'err');
+      $('api-status').textContent=r.ok?'API online':'API offline';
+    }catch{$('api-dot').className='dot err';$('api-status').textContent='sem conexão';}
+  }
+
+  async function loadDbCredentials(){
+    const list=$('cred-db-list');
+    try{
+      const r=await fetch(BASE()+'/api/v1/credentials',{headers:buildHeaders(),signal:AbortSignal.timeout(4000)});
+      if(!r.ok){list.innerHTML=`<span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--error)">Erro ao carregar (${r.status})</span>`;return;}
+      const {data}=await r.json();
+      if(!data.length){list.innerHTML=`<span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3)">Nenhuma credencial salva ainda. Envie um e-mail com o toggle ativado.</span>`;return;}
+      list.innerHTML=data.map(c=>`
+        <div class="cred-db-item">
+          <span class="cdb-email">${c.user}</span>
+          <span class="cdb-badge">✓ ativa</span>
+          <span class="cdb-stats">${c.sentCount||0} enviados</span>
+          <button class="cdb-remove" onclick="deleteCredential('${c._id}','${c.user}')">remover</button>
+        </div>`).join('');
+    }catch{list.innerHTML=`<span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3)">MongoDB não acessível ou API offline.</span>`;}
+  }
+
+  window.deleteCredential=async function(id,user){
+    if(!confirm(`Remover a credencial ${user}?\nEla não poderá mais ser usada em campanhas.`))return;
+    try{
+      const r=await fetch(BASE()+'/api/v1/credentials/'+id,{method:'DELETE',headers:buildHeaders()});
+      if(r.ok) loadDbCredentials();
+    }catch{}
+  };
+
+  $('btn-send').addEventListener('click',async()=>{
+    const btn=$('btn-send');
+    const url=$('api-url').value.trim();
+    const saveCred=$('save-cred').checked;
+    const payload={
+      credentials:{user:$('cred-user').value.trim(),appPassword:$('cred-pass').value.trim()},
+      to:splitEmails($('to').value),
+      subject:$('subject').value.trim(),
+      html:$('html-body').value,
+      saveCredential:saveCred,
+    };
+    const fromName=$('from-name').value.trim();
+    const cc=$('cc').value.trim(), bcc=$('bcc').value.trim(), rt=$('reply-to').value.trim();
+    if(fromName) payload.fromName=fromName;
+    if(cc) payload.cc=splitEmails(cc);
+    if(bcc) payload.bcc=splitEmails(bcc);
+    if(rt) payload.replyTo=rt;
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span>Enviando...';
+    const t0=Date.now();
+    try{
+      const res=await fetch(url,{method:'POST',headers:buildHeaders(),body:JSON.stringify(payload)});
+      const elapsed=Date.now()-t0;
+      const data=await res.json();
+      renderResponse(res.status,elapsed,data,saveCred&&res.ok);
+      addHistory(res.status,payload.to,data,elapsed);
+      if(res.ok&&saveCred) setTimeout(loadDbCredentials,1000);
+    }catch(err){renderError(err.message);}
+    finally{btn.disabled=false;btn.innerHTML='Enviar e-mail';}
+  });
+
+  function renderResponse(status,elapsed,data,credSaved=false){
+    const isOk=status>=200&&status<300;
+    $('response-meta').innerHTML=`
+      <span class="badge ${isOk?'success':status>=400?'error':'warn'}">${status} ${isOk?'OK':'ERRO'}</span>
+      <span class="badge neutral">${elapsed}ms</span>
+      <span class="badge neutral">JSON</span>
+      ${credSaved?'<span class="badge saved">✓ credencial salva no MongoDB</span>':''}`;
+    const body=$('response-body');
+    body.classList.add('populated');
+    body.innerHTML=hlJson(JSON.stringify(data,null,2).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+    $('preview').srcdoc=$('html-body').value||'<p style="padding:20px;color:#999;font-family:sans-serif">Sem HTML.</p>';
+    switchTab('response');
+  }
+
+  function renderError(msg){
+    $('response-meta').innerHTML=`<span class="badge error">ERRO DE REDE</span>`;
+    $('response-body').classList.add('populated');
+    $('response-body').innerHTML=`<span style="color:var(--error)">${msg}</span>`;
+    switchTab('response');
+  }
+
+  function addHistory(status,to,data,elapsed){ history.unshift({status,to:Array.isArray(to)?to[0]:to,data,elapsed,time:Date.now()}); renderHistory(); }
+
+  function renderHistory(){
+    if(!history.length)return;
+    $('history-list').innerHTML=history.slice(0,20).map((h,i)=>`
+      <div class="history-item" onclick="loadHistory(${i})">
+        <div class="hi-status" style="background:${h.status<300?'#16A34A':'var(--error)'}"></div>
+        <div class="hi-info"><div class="hi-to">${h.status} — ${h.to}</div><div class="hi-time">${timeSince(h.time)} · ${h.elapsed}ms</div></div>
+      </div>`).join('');
+  }
+
+  window.loadHistory=function(i){
+    const h=history[i];
+    $('response-meta').innerHTML=`<span class="badge ${h.status<300?'success':'error'}">${h.status}</span><span class="badge neutral">${h.elapsed}ms</span>`;
+    const body=$('response-body'); body.classList.add('populated');
+    body.innerHTML=hlJson(JSON.stringify(h.data,null,2).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+    switchTab('response');
+  };
+
+  function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+name));
+  }
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{ switchTab(t.dataset.tab); if(t.dataset.tab==='history')renderHistory(); }));
+
+  $('btn-clear').addEventListener('click',()=>{
+    ['cred-user','cred-pass','to','cc','bcc','reply-to','from-name','subject','html-body'].forEach(id=>$(id).value='');
+    $('response-meta').innerHTML='';
+    const body=$('response-body'); body.classList.remove('populated');
+    body.innerHTML='<div class="empty-state"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg><span>Nenhuma resposta ainda</span></div>';
+  });
+  $('html-body').addEventListener('input',()=>{ $('preview').srcdoc=$('html-body').value; });
+
+  checkHealth();
+  setInterval(checkHealth,15000);
+  loadDbCredentials();
+</script>
+</body>
+</html>

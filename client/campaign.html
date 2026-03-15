@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gmail Sender — Campanha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    /* ── Tema Claro ───────────────────────────────────────── */
+    :root,
+    [data-theme="light"] {
+      --page:       #F7F6F2;
+      --surface:    #FFFFFF;
+      --surface2:   #F0EFE9;
+      --border:     #E2E0D8;
+      --border2:    #CBC9BF;
+      --accent:     #1A56DB;
+      --accent-h:   #1447B8;
+      --accent-bg:  #EEF3FD;
+      --success:    #0F7B3E;
+      --success-bg: #E8F5EE;
+      --error:      #C0392B;
+      --error-bg:   #FDECEA;
+      --warn:       #92580A;
+      --warn-bg:    #FEF5E7;
+      --purple:     #6D28D9;
+      --purple-bg:  #F3EFFE;
+      --teal:       #0E7490;
+      --teal-bg:    #E0F5F9;
+      --text:       #1A1916;
+      --text-2:     #5A5852;
+      --text-3:     #9A9890;
+      --code-bg:    #FAFAF8;
+      --log-bg:     #FAFAF8;
+      --shadow:     rgba(0,0,0,.06);
+      /* JSON */
+      --jk: #1A56DB; --js: #0F7B3E; --jn: #92580A; --jb: #C0392B;
+    }
+
+    /* ── Tema Escuro ──────────────────────────────────────── */
+    [data-theme="dark"] {
+      --page:       #0F1117;
+      --surface:    #181C27;
+      --surface2:   #1E2333;
+      --border:     #2A2F3F;
+      --border2:    #353C50;
+      --accent:     #4F7EFF;
+      --accent-h:   #6B93FF;
+      --accent-bg:  rgba(79,126,255,.12);
+      --success:    #22C55E;
+      --success-bg: rgba(34,197,94,.1);
+      --error:      #EF4444;
+      --error-bg:   rgba(239,68,68,.1);
+      --warn:       #F59E0B;
+      --warn-bg:    rgba(245,158,11,.1);
+      --purple:     #A78BFA;
+      --purple-bg:  rgba(167,139,250,.1);
+      --teal:       #2DD4BF;
+      --teal-bg:    rgba(45,212,191,.1);
+      --text:       #E8EAF0;
+      --text-2:     #9298B0;
+      --text-3:     #5A6078;
+      --code-bg:    #0A0D14;
+      --log-bg:     #0A0D14;
+      --shadow:     rgba(0,0,0,.3);
+      /* JSON */
+      --jk: #79B8FF; --js: #9ECB8A; --jn: #F8B96E; --jb: #F97583;
+    }
+
+    html{background:var(--page);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;transition:background .25s,color .25s}
+    *,*::before,*::after{transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    body{min-height:100vh;display:flex;flex-direction:column}
+
+    /* ── Header ──────────────────────────────────────────── */
+    header{display:flex;align-items:center;gap:10px;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 1px 4px var(--shadow);flex-shrink:0;position:sticky;top:0;z-index:100}
+    .logo{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 6px rgba(79,126,255,.4)}
+    .logo svg{width:15px;height:15px;fill:#fff}
+    header h1{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-.2px}
+    .brand-sub{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-3)}
+    .nav-sep{width:1px;height:18px;background:var(--border);margin:0 6px;flex-shrink:0}
+    .nav-link{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-2);text-decoration:none;padding:4px 10px;border-radius:6px}
+    .nav-link:hover{color:var(--accent);background:var(--accent-bg)}
+    .nav-link.active{color:var(--accent);background:var(--accent-bg);font-weight:500}
+    .hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .status-pill{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-2);padding:3px 10px;border:1px solid var(--border);border-radius:20px;background:var(--surface2)}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--border2)}
+    .dot.ok{background:#16A34A;box-shadow:0 0 0 2px rgba(22,163,74,.2)}.dot.err{background:var(--error)}
+
+    .btn-theme{width:34px;height:34px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;padding:0;flex-shrink:0;box-shadow:0 1px 3px var(--shadow)}
+    .btn-theme:hover{background:var(--accent-bg);border-color:var(--accent)}
+    [data-theme="light"] .icon-moon{display:block}[data-theme="light"] .icon-sun{display:none}
+    [data-theme="dark"]  .icon-sun{display:block}[data-theme="dark"]  .icon-moon{display:none}
+
+    /* ── Workspace ───────────────────────────────────────── */
+    .workspace{flex:1;display:grid;grid-template-columns:286px 1fr 316px;overflow:hidden;height:calc(100vh - 56px)}
+    .col{overflow-y:auto;border-right:1px solid var(--border);padding:20px 18px;background:var(--page)}
+    .col:last-child{border-right:none}
+    .col-title{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .col-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    /* ── Sections ────────────────────────────────────────── */
+    .sec{margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 1px 3px var(--shadow);overflow:hidden}
+    .sec-head{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--border);background:var(--surface2)}
+    .sec-lbl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-2);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px;font-weight:500}
+    .sec-body{padding:13px}
+
+    /* ── Fields ──────────────────────────────────────────── */
+    .field{margin-bottom:9px}.field:last-child{margin-bottom:0}
+    label{display:block;font-size:11px;font-weight:500;color:var(--text-2);margin-bottom:4px}
+    label em{color:var(--error);font-style:normal}
+    input,textarea,select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 11px;outline:none;resize:vertical}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+    input::placeholder,textarea::placeholder{color:var(--text-3)}
+    select option{background:var(--surface)}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+    /* ── Account list ────────────────────────────────────── */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+
+
+    /* ── Recipients ──────────────────────────────────────── */
+    .rcpt-scroll{max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+    .rcpt-item{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);animation:fadeIn .15s}
+    .rcpt-item span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+    .rcpt-remove{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:0 2px;border-radius:3px}
+    .rcpt-remove:hover{color:var(--error)}
+    .rcpt-add{display:flex;gap:6px}
+    .rcpt-add input{flex:1}
+    .import-zone{display:block;border:1px dashed var(--border2);border-radius:6px;padding:10px;text-align:center;cursor:pointer;font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;margin-top:8px}
+    .import-zone:hover{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+    .import-zone input{display:none}
+
+    /* ── Slider ──────────────────────────────────────────── */
+    .slider-wrap{display:flex;flex-direction:column;gap:6px}
+    .slider-row{display:flex;justify-content:space-between;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3)}
+    input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border2);border-radius:2px;padding:0;border:none;box-shadow:none}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--surface);box-shadow:0 0 0 2px var(--accent)}
+    input[type=range]:focus{border:none;box-shadow:none}
+    .iv-display{display:flex;align-items:baseline;gap:4px;font-family:'JetBrains Mono',monospace}
+    .iv-val{font-size:24px;font-weight:600;color:var(--accent)}
+    .iv-unit{font-size:12px;color:var(--text-2)}
+
+    /* ── Editor ──────────────────────────────────────────── */
+    .etabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface2)}
+    .etab{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-2);padding:6px 13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;border-radius:0}
+    .etab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+    #html-editor{width:100%;height:210px;background:var(--surface);border:none;border-radius:0;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px;outline:none;resize:none;border-bottom:1px solid var(--border)}
+    #html-preview{width:100%;height:210px;background:#fff;border:none;border-bottom:1px solid var(--border);display:none}
+    .var-row{padding:8px 13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface2);border-top:1px solid var(--border)}
+    .var-chip{font-size:10px;color:var(--teal);background:var(--teal-bg);padding:2px 7px;border-radius:20px;font-family:'JetBrains Mono',monospace;border:1px solid rgba(14,116,144,.2)}
+    [data-theme="dark"] .var-chip{border-color:rgba(45,212,191,.2)}
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    button{cursor:pointer;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 16px}
+    button:active{transform:scale(.98)}
+    .btn-accent{background:var(--accent);color:#fff;box-shadow:0 1px 4px rgba(79,126,255,.35)}
+    .btn-accent:hover{background:var(--accent-h)}
+    .btn-accent:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-ghost{background:var(--surface);border:1px solid var(--border2);color:var(--text-2)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+    .btn-danger{background:var(--error-bg);border:1px solid rgba(192,57,43,.35);color:var(--error)}
+    .btn-danger:hover{filter:brightness(.95)}
+    [data-theme="dark"] .btn-danger{border-color:rgba(239,68,68,.3)}
+    .btn-sm{padding:5px 10px;font-size:11px}
+    .btn-xs{padding:3px 8px;font-size:10px}
+    .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Metric cards ────────────────────────────────────── */
+    .est-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .est-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;box-shadow:0 1px 3px var(--shadow)}
+    .est-lbl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3);margin-bottom:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+    .est-val{font-size:20px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text)}
+    .est-val.ok{color:var(--success)}.est-val.warn{color:var(--warn)}.est-val.accent{color:var(--accent)}
+
+    /* ── Summary card ────────────────────────────────────── */
+    .sum-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px var(--shadow)}
+    .sum-row{display:flex;align-items:flex-start;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px}
+    .sum-row:last-child{border-bottom:none;padding-bottom:0}
+    .sum-k{color:var(--text-3);font-family:'JetBrains Mono',monospace;flex-shrink:0;margin-right:8px;font-weight:500}
+    .sum-v{color:var(--text);text-align:right;font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis}
+    .sum-v.accent{color:var(--accent);font-weight:500}
+
+    /* ── Campaign state badges ───────────────────────────── */
+    .cb{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:500}
+    .cb-idle{color:var(--text-3);border-color:var(--border2);background:var(--surface2)}
+    .cb-running{color:var(--warn);border-color:rgba(146,88,10,.3);background:var(--warn-bg)}
+    .cb-done{color:var(--success);border-color:rgba(15,123,62,.3);background:var(--success-bg)}
+    .cb-paused{color:var(--purple);border-color:rgba(109,40,217,.3);background:var(--purple-bg)}
+    .cb-error{color:var(--error);border-color:rgba(192,57,43,.3);background:var(--error-bg)}
+    [data-theme="dark"] .cb-running{border-color:rgba(245,158,11,.3)}
+    [data-theme="dark"] .cb-done{border-color:rgba(34,197,94,.3)}
+    [data-theme="dark"] .cb-paused{border-color:rgba(167,139,250,.3)}
+    [data-theme="dark"] .cb-error{border-color:rgba(239,68,68,.3)}
+
+    /* ── Progress ────────────────────────────────────────── */
+    .prog-wrap{display:none;margin-bottom:12px}.prog-wrap.show{display:block}
+    .prog-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:5px}
+    .prog-fill{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .4s ease}
+    .prog-stats{display:flex;justify-content:space-between;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3)}
+
+    /* ── Log ─────────────────────────────────────────────── */
+    .log-box{background:var(--log-bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+    .ll{line-height:1.6}
+    .ll.ok{color:var(--success)}.ll.err{color:var(--error)}.ll.info{color:var(--text-3)}.ll.warn{color:var(--warn)}
+
+    /* ── Live feed ───────────────────────────────────────── */
+    .feed-title{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;display:flex;align-items:center;gap:8px;font-weight:500}
+    .feed-title::after{content:'';flex:1;height:1px;background:var(--border)}
+    .feed-list{display:flex;flex-direction:column;gap:3px;max-height:200px;overflow-y:auto}
+    .feed-item{display:flex;align-items:center;gap:8px;padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--surface);animation:fadeIn .2s}
+    .feed-item.ok-item{border-color:rgba(15,123,62,.25);background:var(--success-bg)}
+    .feed-item.err-item{border-color:rgba(192,57,43,.25);background:var(--error-bg)}
+    [data-theme="dark"] .feed-item.ok-item{border-color:rgba(34,197,94,.2)}
+    [data-theme="dark"] .feed-item.err-item{border-color:rgba(239,68,68,.2)}
+    .feed-icon{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;font-weight:700}
+    .feed-icon.ok-icon{background:var(--success);color:#fff}
+    .feed-icon.err-icon{background:var(--error);color:#fff}
+    .feed-to{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+    .feed-via{color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+    .feed-idx{color:var(--text-3);flex-shrink:0}
+
+    hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+
+    @media(max-width:900px){.workspace{grid-template-columns:1fr;height:auto}.col{border-right:none;border-bottom:1px solid var(--border)}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+  </div>
+  <h1>JK Mail Sender</h1>
+  <span class="brand-sub">— Campaigns</span>
+  <div class="nav-sep"></div>
+  <a href="index.html" class="nav-link">Cadastro de Contas</a>
+  <a href="campaign.html" class="nav-link active">Campanha</a>
+  <div class="hdr-right">
+    <div class="status-pill"><div class="dot" id="dot"></div><span id="api-lbl">verificando...</span></div>
+    <button class="btn-theme" id="btn-theme" title="Alternar tema">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- COL 1 -->
+  <div class="col">
+    <div class="col-title">configuração</div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-lbl">Endpoint da API</div></div>
+      <div class="sec-body">
+        <div class="field"><label>Base URL</label><input type="text" id="api-url" value="http://localhost:3000" spellcheck="false" /></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-lbl">Contas disponíveis</div>
+        <button onclick="loadAccounts()" class="btn-ghost btn-xs">↻</button>
+      </div>
+      <div class="sec-body" style="display:flex;align-items:center;gap:12px">
+        <div id="acct-count-wrap" style="display:flex;align-items:center;gap:8px">
+          <div id="acct-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0"></div>
+          <span id="acct-badge" style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text)">0</span>
+          <span style="font-size:12px;color:var(--text-3);font-family:'JetBrains Mono',monospace" id="acct-label">contas carregando...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-lbl">Intervalo de envio</div></div>
+      <div class="sec-body">
+        <div class="iv-display"><span class="iv-val" id="iv-val">30</span><span class="iv-unit">segundos / conta</span></div>
+        <div class="slider-wrap" style="margin-top:10px">
+          <input type="range" id="iv-slider" min="5" max="300" step="5" value="30" />
+          <div class="slider-row"><span>5s</span><span>1min</span><span>2min</span><span>5min</span></div>
+        </div>
+        <p id="iv-note" style="font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;margin-top:6px">Cada conta aguarda 30s entre seus próprios envios.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-lbl">Cabeçalhos de E-mail</div></div>
+      <div class="sec-body">
+        <div class="field"><label>Nome exibido no remetente</label><input type="text" id="from-name" placeholder="Ex: Equipe de Marketing" /></div>
+        <div class="field"><label>BCC (cópia oculta)</label><input type="email" id="bcc" placeholder="auditoria@empresa.com" /></div>
+        <div class="field"><label>Reply-To</label><input type="email" id="reply-to" placeholder="suporte@empresa.com" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COL 2 -->
+  <div class="col">
+    <div class="col-title">conteúdo &amp; destinatários</div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-lbl">Identificação</div></div>
+      <div class="sec-body">
+        <div class="field"><label>Nome da campanha <em>*</em></label><input type="text" id="camp-name" placeholder="Ex: Black Friday 2025" /></div>
+        <div class="field"><label>Assunto <em>*</em></label><input type="text" id="subject" placeholder="Assunto do e-mail" /></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-lbl">Destinatários</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn-ghost btn-xs" id="btn-clear-rcpt">limpar</button>
+          <span class="cb cb-idle" id="rcpt-badge">0</span>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="rcpt-scroll" id="rcpt-list"></div>
+        <div class="rcpt-add">
+          <input type="text" id="rcpt-input" placeholder="email@exemplo.com ou múltiplos por vírgula" />
+          <button class="btn-accent btn-sm" id="btn-add-rcpt">+</button>
+        </div>
+        <p style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-3);margin-top:5px" id="rcpt-count">0 destinatários</p>
+        <label class="import-zone" for="csv-input">
+          <input type="file" id="csv-input" accept=".csv,.txt" />
+          Importar .csv ou .txt (um e-mail por linha)
+        </label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-lbl">Corpo HTML</div>
+        <button class="btn-ghost btn-xs" id="btn-template">template</button>
+      </div>
+      <div class="etabs">
+        <button class="etab active" data-etab="code">Código</button>
+        <button class="etab" data-etab="preview">Preview</button>
+      </div>
+      <textarea id="html-editor" placeholder="<h1>Olá {{email}}!</h1>&#10;<p>Conteúdo aqui.</p>"></textarea>
+      <iframe id="html-preview" sandbox="allow-same-origin"></iframe>
+      <div class="var-row">
+        <span style="font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;font-weight:500">variáveis:</span>
+        <code class="var-chip">{{email}}</code>
+        <code class="var-chip">{{index}}</code>
+        <code class="var-chip">{{total}}</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- COL 3 -->
+  <div class="col">
+    <div class="col-title">controle &amp; monitoramento</div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <span style="font-size:12px;color:var(--text-2);font-weight:500">Status da campanha</span>
+      <span class="cb cb-idle" id="state-badge">aguardando</span>
+    </div>
+
+    <div class="est-grid">
+      <div class="est-card"><div class="est-lbl">Destinatários</div><div class="est-val accent" id="est-total">0</div></div>
+      <div class="est-card"><div class="est-lbl">Contas ativas</div><div class="est-val accent" id="est-accts">0</div></div>
+      <div class="est-card"><div class="est-lbl">Enviados</div><div class="est-val ok" id="est-sent">0</div></div>
+      <div class="est-card"><div class="est-lbl">Falhas</div><div class="est-val warn" id="est-fail">0</div></div>
+    </div>
+
+    <div class="sum-card">
+      <div class="sum-row"><span class="sum-k">quota / conta</span><span class="sum-v accent" id="sum-quota">—</span></div>
+      <div class="sum-row"><span class="sum-k">assunto</span><span class="sum-v" id="sum-subj">—</span></div>
+      <div class="sum-row"><span class="sum-k">bcc</span><span class="sum-v" id="sum-bcc">—</span></div>
+      <div class="sum-row"><span class="sum-k">reply-to</span><span class="sum-v" id="sum-reply">—</span></div>
+      <div class="sum-row"><span class="sum-k">intervalo</span><span class="sum-v" id="sum-iv">—</span></div>
+      <div class="sum-row"><span class="sum-k">duração est.</span><span class="sum-v" id="sum-dur">—</span></div>
+    </div>
+
+    <div class="prog-wrap" id="prog-wrap">
+      <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-stats"><span id="prog-txt">0 / 0</span><span id="prog-pct">0%</span></div>
+    </div>
+
+    <div class="log-box" id="log-box">
+      <span class="ll info">— aguardando início —</span>
+    </div>
+
+    <div class="feed-title">envios em tempo real</div>
+    <div class="feed-list" id="feed-list">
+      <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3)">Nenhum envio ainda.</span>
+    </div>
+
+    <hr>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn-accent" id="btn-start" style="width:100%;padding:10px">Criar &amp; Iniciar campanha</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" id="btn-pause" style="flex:1" disabled>Pausar</button>
+        <button class="btn-danger" id="btn-stop" style="flex:1" disabled>Parar</button>
+      </div>
+      <button class="btn-ghost btn-sm" id="btn-export" style="width:100%">Exportar log (.txt)</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Theme toggle ─────────────────────────────────────────────────────────
+  (function() {
+    const saved = localStorage.getItem('gs_theme')
+      || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = saved;
+  })();
+
+  document.getElementById('btn-theme').addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('gs_theme', next);
+  });
+
+  // ── Guarda de sessão ──────────────────────────────────────────────────────
+  if (sessionStorage.getItem('gs_session') !== 'ok') { window.location.replace('login.html'); }
+
+  // ── App ────────────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const BASE = () => $('api-url').value.replace(/\/+$/,'');
+  const API_KEY = 'sua_chave_aqui'; // mesma chave que API_SECRET_KEY no .env
+  const HDRS = () => { const h={'Content-Type':'application/json'}; if(API_KEY)h['x-api-key']=API_KEY; return h; };
+  const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+  let recipients = [];
+  let accounts   = [];
+  let activeCampaignId = null;
+  let sseSource   = null;
+  let logLines    = [];
+  let feedItems   = 0;
+
+  function fmtDur(s){ if(s<60)return s+'s'; if(s<3600)return Math.ceil(s/60)+'min'; return Math.floor(s/3600)+'h'+Math.ceil((s%3600)/60)+'min'; }
+  function now(){ return new Date().toLocaleTimeString('pt-BR'); }
+
+  function log(msg, type='info'){
+    const line=document.createElement('div');
+    line.className='ll '+type;
+    line.textContent=`[${now()}] ${msg}`;
+    $('log-box').appendChild(line);
+    $('log-box').scrollTop=$('log-box').scrollHeight;
+    logLines.push(`[${now()}][${type.toUpperCase()}] ${msg}`);
+  }
+
+  async function checkHealth(){
+    try{
+      const r=await fetch(BASE()+'/health',{signal:AbortSignal.timeout(3000)});
+      $('dot').className='dot '+(r.ok?'ok':'err');
+      $('api-lbl').textContent=r.ok?'API online':'API offline';
+    }catch{$('dot').className='dot err';$('api-lbl').textContent='sem conexão';}
+  }
+
+  async function loadAccounts(){
+    try{
+      const r=await fetch(BASE()+'/api/v1/credentials',{headers:HDRS(),signal:AbortSignal.timeout(5000)});
+      if(!r.ok){log('Erro ao carregar contas: '+r.status,'err');return;}
+      const {data}=await r.json();
+      accounts=data;
+      renderAccounts();
+      updateSummary();
+    }catch(e){log('Não foi possível carregar contas: '+e.message,'warn');}
+  }
+
+  function renderAccounts(){
+    const n = accounts.length;
+    $('est-accts').textContent = n;
+    $('acct-badge').textContent = n;
+    const dot = $('acct-status-dot');
+    if(!n){
+      dot.style.background = 'var(--error)';
+      $('acct-label').textContent = 'nenhuma conta cadastrada';
+      return;
+    }
+    dot.style.background = '#16A34A';
+    dot.style.boxShadow  = '0 0 0 2px rgba(22,163,74,.2)';
+    const quota = recipients.length ? Math.ceil(recipients.length/n) : 0;
+    $('acct-label').textContent = quota
+      ? `conta${n!==1?'s':''} ativa${n!==1?'s':''} · ${quota} email${quota!==1?'s':''}/conta`
+      : `conta${n!==1?'s':''} ativa${n!==1?'s':''}`;
+  }
+
+  function renderRecipients(){
+    const list=$('rcpt-list');
+    if(!recipients.length){list.innerHTML='';$('rcpt-count').textContent='0 destinatários';$('rcpt-badge').textContent='0';updateSummary();return;}
+    list.innerHTML=recipients.map((r,i)=>`
+      <div class="rcpt-item">
+        <span>${r}</span>
+        <button class="rcpt-remove" onclick="removeRcpt(${i})">&times;</button>
+      </div>`).join('');
+    $('rcpt-count').textContent=recipients.length+' destinatário'+(recipients.length!==1?'s':'');
+    $('rcpt-badge').textContent=recipients.length;
+    renderAccounts();
+    updateSummary();
+  }
+
+  window.removeRcpt=function(i){recipients.splice(i,1);renderRecipients();};
+
+  function addEmails(raw){
+    const parts=raw.split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);
+    let added=0;
+    parts.forEach(e=>{if(isEmail(e)&&!recipients.includes(e)){recipients.push(e);added++;}});
+    renderRecipients();
+    return added;
+  }
+
+  $('btn-add-rcpt').addEventListener('click',()=>{const n=addEmails($('rcpt-input').value);if(n)$('rcpt-input').value='';});
+  $('rcpt-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('btn-add-rcpt').click();});
+  $('btn-clear-rcpt').addEventListener('click',()=>{recipients=[];renderRecipients();});
+  $('csv-input').addEventListener('change',e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{const n=addEmails(ev.target.result);log(`Importados ${n} e-mails de "${file.name}"`,'info');};
+    reader.readAsText(file);e.target.value='';
+  });
+
+  $('iv-slider').addEventListener('input',()=>{
+    const v=$('iv-slider').value;
+    $('iv-val').textContent=v;
+    $('iv-note').textContent=`Cada conta aguarda ${v}s entre seus próprios envios.`;
+    updateSummary();
+  });
+
+  function updateSummary(){
+    const n=recipients.length, a=accounts.length, iv=Number($('iv-slider').value);
+    const quota=a?Math.ceil(n/a):0;
+    const dur=quota>1?(quota-1)*iv:0;
+    $('est-total').textContent=n;
+    $('sum-quota').textContent=a?`${quota} emails/conta`:'aguardando contas';
+    $('sum-subj').textContent=$('subject').value.trim()||'—';
+    $('sum-bcc').textContent=$('bcc').value.trim()||'—';
+    $('sum-reply').textContent=$('reply-to').value.trim()||'—';
+    $('sum-iv').textContent=iv+'s';
+    $('sum-dur').textContent=n&&a?fmtDur(dur):'—';
+  }
+
+  ['subject','bcc','reply-to','from-name'].forEach(id=>$(id).addEventListener('input',updateSummary));
+
+  document.querySelectorAll('.etab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.etab').forEach(e=>e.classList.remove('active'));
+    t.classList.add('active');
+    const code=t.dataset.etab==='code';
+    $('html-editor').style.display=code?'':'none';
+    $('html-preview').style.display=code?'none':'';
+    if(!code)$('html-preview').srcdoc=$('html-editor').value;
+  }));
+
+  $('btn-template').addEventListener('click',()=>{
+    $('html-editor').value=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#F7F6F2;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F6F2;padding:32px 0">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E2E0D8">
+        <tr><td style="background:#1A56DB;padding:28px 32px"><h1 style="color:#fff;margin:0;font-size:22px;font-weight:600">Nome da Campanha</h1></td></tr>
+        <tr><td style="padding:32px">
+          <p style="color:#1A1916;font-size:15px;line-height:1.7;margin:0 0 20px">Olá!</p>
+          <p style="color:#5A5852;font-size:15px;line-height:1.7;margin:0 0 24px">Conteúdo principal da campanha aqui.</p>
+          <a href="#" style="display:inline-block;background:#1A56DB;color:#fff;text-decoration:none;padding:12px 24px;border-radius:7px;font-size:14px;font-weight:600">Saiba mais</a>
+        </td></tr>
+        <tr><td style="background:#F7F6F2;padding:18px 32px;border-top:1px solid #E2E0D8">
+          <p style="color:#9A9890;font-size:12px;margin:0">Enviado para {{email}} · E-mail {{index}} de {{total}}</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+  });
+
+  function setUi(state){
+    const labels={idle:'aguardando',running:'enviando...',paused:'pausado',done:'concluído',error:'erro',stopped:'interrompido'};
+    const cls={idle:'cb-idle',running:'cb-running',paused:'cb-paused',done:'cb-done',error:'cb-error',stopped:'cb-paused'};
+    $('state-badge').textContent=labels[state]||state;
+    $('state-badge').className='cb '+(cls[state]||'cb-idle');
+    $('btn-start').disabled=state==='running'||state==='paused';
+    $('btn-pause').disabled=state!=='running'&&state!=='paused';
+    $('btn-stop').disabled=state==='idle'||state==='done'||state==='stopped';
+    $('btn-pause').textContent=state==='paused'?'Retomar':'Pausar';
+    $('btn-start').innerHTML=state==='running'?'<span class="spinner"></span>Enviando...':'Criar &amp; Iniciar campanha';
+  }
+
+  function updateProgress(sent,failed,total){
+    const done=sent+failed;
+    const pct=total?Math.round(done/total*100):0;
+    $('prog-fill').style.width=pct+'%';
+    $('prog-txt').textContent=`${done} / ${total}`;
+    $('prog-pct').textContent=pct+'%';
+    $('est-sent').textContent=sent;
+    $('est-fail').textContent=failed;
+  }
+
+  function connectSSE(id){
+    if(sseSource){sseSource.close();sseSource=null;}
+    sseSource=new EventSource(BASE()+'/api/v1/campaigns/'+id+'/stream');
+    sseSource.addEventListener('snapshot',e=>{const d=JSON.parse(e.data);updateProgress(d.sentCount,d.failCount||0,d.total);setUi(d.status||'running');});
+    sseSource.addEventListener('sent',e=>{const d=JSON.parse(e.data);updateProgress(d.sentCount,d.failCount,d.total);addFeedItem(true,d.email,d.account,d.index,d.total);});
+    sseSource.addEventListener('failed',e=>{const d=JSON.parse(e.data);updateProgress(d.sentCount,d.failCount,d.total);addFeedItem(false,d.email,d.account,d.index,d.total,d.error);});
+    sseSource.addEventListener('status',e=>{const d=JSON.parse(e.data);setUi(d.status);if(d.message)log(d.message,d.status==='done'?'ok':d.status==='error'?'err':'info');if(d.status==='done'||d.status==='stopped'){sseSource.close();sseSource=null;}});
+    sseSource.addEventListener('info',e=>{const d=JSON.parse(e.data);if(d.message)log(d.message,'info');});
+    sseSource.addEventListener('warn',e=>{const d=JSON.parse(e.data);if(d.message)log(d.message,'warn');});
+    sseSource.addEventListener('error',e=>{const d=JSON.parse(e.data);if(d&&d.message)log(d.message,'err');});
+    sseSource.onerror=()=>{};
+  }
+
+  function addFeedItem(ok,email,account,idx,total){
+    const list=$('feed-list');
+    if(feedItems===0)list.innerHTML='';
+    feedItems++;
+    const item=document.createElement('div');
+    item.className='feed-item '+(ok?'ok-item':'err-item');
+    item.innerHTML=`
+      <div class="feed-icon ${ok?'ok-icon':'err-icon'}">${ok?'✓':'✗'}</div>
+      <span class="feed-to" title="${email}">${email}</span>
+      <span class="feed-via" title="${account}">via ${account}</span>
+      <span class="feed-idx">${idx}/${total}</span>`;
+    list.insertBefore(item,list.firstChild);
+    while(list.children.length>100)list.removeChild(list.lastChild);
+  }
+
+  $('btn-start').addEventListener('click',async()=>{
+    if(!accounts.length){log('Nenhuma conta ativa. Cadastre via tela de Teste.','warn');return;}
+    if(!recipients.length){log('Adicione ao menos um destinatário.','warn');return;}
+    if(!$('camp-name').value.trim()){log('Informe o nome da campanha.','warn');return;}
+    if(!$('subject').value.trim()){log('Informe o assunto.','warn');return;}
+    if(!$('html-editor').value.trim()){log('Informe o HTML do e-mail.','warn');return;}
+    const payload={name:$('camp-name').value.trim(),subject:$('subject').value.trim(),html:$('html-editor').value,fromName:$('from-name').value.trim(),bcc:$('bcc').value.trim(),replyTo:$('reply-to').value.trim(),intervalSec:Number($('iv-slider').value),recipients:[...recipients]};
+    $('log-box').innerHTML='';
+    $('feed-list').innerHTML=`<span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-3)">Aguardando primeiro envio...</span>`;
+    feedItems=0;$('prog-wrap').classList.add('show');updateProgress(0,0,recipients.length);setUi('running');
+    log(`Criando campanha "${payload.name}" com ${recipients.length} destinatários e ${accounts.length} contas...`,'info');
+    try{
+      const rc=await fetch(BASE()+'/api/v1/campaigns',{method:'POST',headers:HDRS(),body:JSON.stringify(payload)});
+      const dc=await rc.json();
+      if(!rc.ok){log('Erro ao criar campanha: '+(dc.message||rc.status),'err');setUi('error');return;}
+      activeCampaignId=dc.data.id;
+      log(`Campanha criada (ID: ${activeCampaignId}). Iniciando envios...`,'ok');
+      connectSSE(activeCampaignId);
+      const rs=await fetch(BASE()+'/api/v1/campaigns/'+activeCampaignId+'/start',{method:'POST',headers:HDRS()});
+      const ds=await rs.json();
+      if(!rs.ok){log('Erro ao iniciar: '+(ds.message||rs.status),'err');setUi('error');return;}
+      log('Envios disparados em paralelo para todas as contas.','ok');
+    }catch(err){log('Erro: '+err.message,'err');setUi('error');}
+  });
+
+  $('btn-pause').addEventListener('click',async()=>{
+    if(!activeCampaignId)return;
+    const isPaused=$('btn-pause').textContent.trim()==='Retomar';
+    try{
+      await fetch(BASE()+'/api/v1/campaigns/'+activeCampaignId+'/'+(isPaused?'resume':'pause'),{method:'POST',headers:HDRS()});
+      setUi(isPaused?'running':'paused');
+      log(isPaused?'Campanha retomada.':'Campanha pausada.',isPaused?'ok':'warn');
+    }catch(e){log('Erro: '+e.message,'err');}
+  });
+
+  $('btn-stop').addEventListener('click',async()=>{
+    if(!activeCampaignId)return;
+    if(!confirm('Parar a campanha? Os envios em andamento serão interrompidos.'))return;
+    try{
+      await fetch(BASE()+'/api/v1/campaigns/'+activeCampaignId+'/stop',{method:'POST',headers:HDRS()});
+      setUi('stopped');log('Campanha interrompida manualmente.','warn');
+      if(sseSource){sseSource.close();sseSource=null;}
+    }catch(e){log('Erro: '+e.message,'err');}
+  });
+
+  $('btn-export').addEventListener('click',()=>{
+    if(!logLines.length)return;
+    const blob=new Blob([logLines.join('\n')],{type:'text/plain'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`campanha-log-${new Date().toISOString().slice(0,10)}.txt`;a.click();
+  });
+
+  checkHealth();setInterval(checkHealth,15000);
+  loadAccounts();setInterval(loadAccounts,30000);
+  setUi('idle');updateSummary();
+</script>
+</body>
+</html>
