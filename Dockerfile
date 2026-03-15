@@ -1,19 +1,19 @@
 FROM node:20-alpine AS base
 WORKDIR /app
 
-# Dependências de produção
 FROM base AS deps
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# Build final
 FROM base AS runner
 ENV NODE_ENV=production
+ENV PORT=3000
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY src ./src
+COPY src    ./src
+COPY client ./client
 COPY package.json ./
 
 RUN mkdir -p logs && chown -R appuser:appgroup /app
