@@ -52,12 +52,9 @@ app.get('/health', (_req, res) =>
   res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() })
 );
 
-// ── Cliente estático — sempre disponível (teste e campanha) ───────────────
-// Servido em todos os ambientes para que `npm start` funcione para testes.
-// Em produção real, prefira servir via Nginx ou CDN.
+
 app.use('/client', express.static(path.join(__dirname, '..', 'client')));
 
-// Redireciona / para o cliente de teste
 app.get('/', (_req, res) =>
   res.redirect('/client/login.html')
 );
