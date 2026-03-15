@@ -5,7 +5,7 @@
  * Execute: node exemplo-cliente.js
  */
 
-const API_URL = 'http://localhost:3000/api/v1/emails/send';
+const API_URL = 'http://apollo.ia-outsider.com.br/api/v1/emails/send';
 const API_KEY = ''; // Deixe vazio se API_SECRET_KEY não estiver configurada no .env
 
 async function enviarEmail() {

@@ -9,7 +9,7 @@
 const axios = require('axios');
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://apollo.ia-outsider.com.br',
   headers: {
     'Content-Type': 'application/json',
     // 'x-api-key': 'sua_chave_aqui', // descomente se API_SECRET_KEY estiver configurada

@@ -19,7 +19,7 @@ info:
     name: MIT
 
 servers:
-  - url: http://localhost:3000
+  - url: http://apollo.ia-outsider.com.br
     description: Desenvolvimento local
 
 tags:
